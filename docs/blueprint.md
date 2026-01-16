@@ -1,4 +1,4 @@
-# **App Name**: DevTerminal
+# **App Name**: CLI-folio
 
 ## Core Features:
 

@@ -17,7 +17,7 @@ export function BootSequence({ onComplete }: { onComplete: () => void }) {
 
     const bootLines = [
         `Last login: ${currentTime} on ttys001`,
-        'Booting DevTerminal v1.0.0...',
+        'Booting CLI-folio v1.0.0...',
         'Initializing system...',
         'Loading kernel modules... [OK]',
         'Mounting file systems... [OK]',
