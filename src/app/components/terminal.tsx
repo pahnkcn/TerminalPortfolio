@@ -1,8 +1,8 @@
 'use client';
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getCommandOutput } from '@/lib/commands';
-import { COMMANDS } from '@/lib/data';
+import { COMMANDS, PROJECTS } from '@/lib/data';
 
 type HistoryItem = {
   command: string;
@@ -18,6 +18,26 @@ export function Terminal() {
   const [booting, setBooting] = useState(true);
   const [bootLines, setBootLines] = useState<string[]>([]);
   const [currentTime, setCurrentTime] = useState('');
+
+  const suggestions = useMemo(() => {
+    const normalizedInput = input.trimStart().toLowerCase();
+    if (!normalizedInput) return [];
+    if (normalizedInput === 'project' || normalizedInput.startsWith('project ')) {
+      const typedProject = normalizedInput.replace(/^project\s*/, '');
+      return PROJECTS
+        .map(project => project.name)
+        .filter(name => name.startsWith(typedProject))
+        .map(name => `project ${name}`);
+    }
+    if (normalizedInput.includes(' ')) return [];
+    return COMMANDS.filter(command => command.startsWith(normalizedInput));
+  }, [input]);
+
+  const hasUniqueSuggestion = suggestions.length === 1;
+  const activeSuggestion = hasUniqueSuggestion ? suggestions[0] : '';
+  const suggestionSuffix = hasUniqueSuggestion && input && activeSuggestion.toLowerCase().startsWith(input.toLowerCase())
+    ? activeSuggestion.slice(input.length)
+    : '';
 
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -110,6 +130,12 @@ export function Terminal() {
     setIsProcessing(false);
   }, [booting]);
 
+  const applySuggestion = useCallback(() => {
+    if (!activeSuggestion || !suggestionSuffix) return false;
+    setInput(activeSuggestion);
+    return true;
+  }, [activeSuggestion, suggestionSuffix]);
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (isProcessing || booting) return;
 
@@ -134,12 +160,11 @@ export function Terminal() {
       }
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      const matchingCommands = COMMANDS.filter(c => c.startsWith(input.toLowerCase()));
-      if (matchingCommands.length === 1) {
-        setInput(matchingCommands[0]);
-      } else if (matchingCommands.length > 1) {
-        const newHistoryItem = { command: input, output: <div className="flex gap-4">{matchingCommands.join('  ')}</div>};
-        setHistory(prev => [...prev, newHistoryItem]);
+      applySuggestion();
+    } else if (e.key === 'ArrowRight') {
+      if (suggestionSuffix) {
+        e.preventDefault();
+        applySuggestion();
       }
     } else if (e.ctrlKey && e.key === 'l') {
         e.preventDefault();
@@ -172,6 +197,17 @@ export function Terminal() {
               <span className="text-accent">user@portfolio:~$</span>
               <span>{input}</span>
               <span className="w-2 h-4 bg-primary animate-blink"></span>
+              {suggestionSuffix && (
+                <span className="text-muted-foreground">{suggestionSuffix}</span>
+              )}
+            </div>
+          )}
+          {!isProcessing && !booting && suggestions.length > 1 && (
+            <div className="ml-6 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+              <span className="text-accent/80">suggestions:</span>
+              {suggestions.map(suggestion => (
+                <span key={suggestion}>{suggestion}</span>
+              ))}
             </div>
           )}
         </div>

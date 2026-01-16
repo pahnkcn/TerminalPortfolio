@@ -17,6 +17,50 @@ const AiError = () => {
   return <p className="text-destructive">Error communicating with AI. See toast for details.</p>;
 }
 
+const getEditDistance = (source: string, target: string) => {
+  const sourceLength = source.length;
+  const targetLength = target.length;
+  const distance = Array.from({ length: sourceLength + 1 }, () => Array(targetLength + 1).fill(0));
+
+  for (let i = 0; i <= sourceLength; i += 1) {
+    distance[i][0] = i;
+  }
+
+  for (let j = 0; j <= targetLength; j += 1) {
+    distance[0][j] = j;
+  }
+
+  for (let i = 1; i <= sourceLength; i += 1) {
+    for (let j = 1; j <= targetLength; j += 1) {
+      const cost = source[i - 1] === target[j - 1] ? 0 : 1;
+      distance[i][j] = Math.min(
+        distance[i - 1][j] + 1,
+        distance[i][j - 1] + 1,
+        distance[i - 1][j - 1] + cost,
+      );
+    }
+  }
+
+  return distance[sourceLength][targetLength];
+};
+
+const getClosestCommand = (input: string) => {
+  const normalizedInput = input.toLowerCase();
+  const maxDistance = normalizedInput.length <= 4 ? 1 : 2;
+  let closestCommand = '';
+  let closestDistance = Number.POSITIVE_INFINITY;
+
+  COMMANDS.forEach(command => {
+    const distance = getEditDistance(normalizedInput, command);
+    if (distance < closestDistance) {
+      closestCommand = command;
+      closestDistance = distance;
+    }
+  });
+
+  return closestDistance <= maxDistance ? closestCommand : '';
+};
+
 
 const getHelp = () => (
   <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2">
@@ -132,6 +176,14 @@ export const getCommandOutput = async (commandStr: string): Promise<React.ReactN
       return ''; // special case handled in terminal component
     default:
       if (!command) return '';
+      const closestCommand = getClosestCommand(command);
+      if (closestCommand) {
+        return (
+          <p>
+            Command not found: {command}. Did you mean: <span className="text-accent">{closestCommand}</span>?
+          </p>
+        );
+      }
       return <p>Command not found: {command}. Type 'help' for a list of commands.</p>;
   }
 };
