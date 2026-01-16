@@ -1,4 +1,4 @@
-# DevTerminal
+# CLI-folio
 
 A modern developer portfolio built with Next.js 15, featuring an interactive terminal/CLI experience theme. This project showcases web development skills through a unique command-line interface that visitors can interact with.
 

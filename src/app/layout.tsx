@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'DevTerminal',
+  title: 'CLI-folio',
   description: 'A developer portfolio with a Terminal / CLI experience theme.',
 };
 
