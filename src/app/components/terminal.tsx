@@ -9,6 +9,12 @@ type HistoryItem = {
   output: React.ReactNode;
 };
 
+type AiStatus = {
+  label: string;
+  configured: boolean;
+  provider: string;
+};
+
 const ASCII_ART = [
   '  ____ _     ___        __       _ _       ',
   ' / ___| |   |_ _|      / _| ___ | (_) ___  ',
@@ -18,8 +24,26 @@ const ASCII_ART = [
 ];
 
 const QUICK_ACTIONS = ['help', 'aboutme', 'projects', 'contact'];
+const AI_PROMPTS = [
+  {
+    label: 'Impact highlights',
+    command: 'ask What measurable impact did you drive in your roles?',
+  },
+  {
+    label: 'Cloud systems',
+    command: 'ask Which cloud systems or architectures are you most proud of?',
+  },
+  {
+    label: 'CI/CD improvements',
+    command: 'ask How did you improve CI/CD speed and reliability?',
+  },
+];
 
-export function Terminal() {
+type TerminalProps = {
+  aiStatus: AiStatus;
+};
+
+export function Terminal({ aiStatus }: TerminalProps) {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
@@ -55,6 +79,9 @@ export function Terminal() {
     : isProcessing
       ? 'Executing command'
       : 'Ready for input';
+  const isAiConfigured = aiStatus?.configured ?? false;
+  const aiBadgeTone = isAiConfigured ? 'bg-emerald-400' : 'bg-rose-400';
+  const aiBadgeLabel = isAiConfigured ? `AI online · ${aiStatus.label}` : 'AI offline';
 
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -128,7 +155,17 @@ export function Terminal() {
     }
 
     setIsProcessing(true);
-    const newHistoryItem: HistoryItem = { command: commandStr, output: <span className="animate-pulse">Processing...</span> };
+    const normalizedCommand = commandStr.trim().toLowerCase();
+    const isAskCommand = normalizedCommand === 'ask' || normalizedCommand.startsWith('ask ');
+    const processingLabel = isAskCommand ? 'Consulting AI model...' : 'Processing...';
+    const newHistoryItem: HistoryItem = {
+      command: commandStr,
+      output: (
+        <span className={`animate-pulse ${isAskCommand ? 'text-accent' : ''}`}>
+          {processingLabel}
+        </span>
+      ),
+    };
     setHistory(prev => [...prev, newHistoryItem]);
     if(commandStr.trim()){
       setCommandHistory(prev => [commandStr, ...prev]);
@@ -222,7 +259,41 @@ export function Terminal() {
             <p className="mt-2 text-xs text-muted-foreground">
               Tip: use <span className="text-foreground">Tab</span> to autocomplete, <span className="text-foreground">↑</span>/<span className="text-foreground">↓</span> to browse history.
             </p>
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+            <div className="mt-4 rounded-xl border border-accent/40 bg-[radial-gradient(circle_at_top,_rgba(173,216,230,0.18),_rgba(18,18,18,0.95)_65%)] px-4 py-3 text-xs shadow-[0_0_25px_rgba(173,216,230,0.15)]">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.4em] text-accent/80">Ask AI</p>
+                  <p className="mt-1 text-sm text-foreground/90">
+                    Ask the portfolio AI about impact, projects, or systems. It answers using verified portfolio data.
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-background/50 px-3 py-1 text-[11px] text-accent">
+                  <span className={`h-2 w-2 rounded-full ${aiBadgeTone} ${isAiConfigured ? 'animate-pulse' : ''}`} />
+                  {aiBadgeLabel}
+                </span>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {AI_PROMPTS.map(prompt => (
+                  <button
+                    key={prompt.label}
+                    type="button"
+                    onClick={() => handleQuickAction(prompt.command)}
+                    disabled={isProcessing || booting || !isAiConfigured}
+                    className="rounded-full border border-accent/40 bg-secondary/60 px-3 py-1 text-[11px] text-foreground/80 transition hover:border-accent hover:bg-secondary hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {prompt.label}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                {isAiConfigured ? (
+                  <>Try typing <span className="text-foreground">ask &lt;question&gt;</span> or tap a prompt.</>
+                ) : (
+                  <>AI needs an API key in <span className="text-foreground">.env.local</span> to answer questions.</>
+                )}
+              </p>
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
               <span className="text-muted-foreground">Quick actions:</span>
               {QUICK_ACTIONS.map(action => (
                 <button

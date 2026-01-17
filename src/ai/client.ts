@@ -21,6 +21,12 @@ type GenerateTextInput = {
   provider?: AiProvider;
 };
 
+export type AiStatus = {
+  provider: AiProvider;
+  label: string;
+  configured: boolean;
+};
+
 const PROVIDERS: Record<AiProvider, ProviderConfig> = {
   gemini: {
     id: 'gemini',
@@ -196,6 +202,16 @@ export const generateAiText = async (input: GenerateTextInput) => {
     return requestGemini(config, input, apiKey, model);
   }
   return requestOpenAiLike(config, input, apiKey, model);
+};
+
+export const getAiStatus = (): AiStatus => {
+  const provider = resolveProvider();
+  const config = PROVIDERS[provider];
+  return {
+    provider,
+    label: config.label,
+    configured: Boolean(process.env[config.apiKeyEnv]),
+  };
 };
 
 export const enforceAiCooldown = async (action: string) => {
