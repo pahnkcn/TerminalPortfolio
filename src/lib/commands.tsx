@@ -167,7 +167,7 @@ const getHelp = () => (
       const label = cmd === 'project'
         ? 'project <name>'
         : cmd === 'ask'
-          ? 'ask <question>'
+          ? 'ask "<question>"'
           : cmd;
       return <span key={cmd}>{label}</span>;
     })}
@@ -261,12 +261,24 @@ const getPortfolioSnapshot = () => ({
 const getAskResponse = async (question: string) => {
   const trimmedQuestion = question.trim();
   if (!trimmedQuestion) {
-    return <p>Please provide a question after "ask". Example: ask Tell me about your projects.</p>;
+    return <p>Please provide a question after "ask". Example: ask "Tell me about your projects."</p>;
+  }
+
+  if (!trimmedQuestion.startsWith('"')) {
+    return <p>Ask must start with a quote. Example: ask "Tell me about your projects."</p>;
+  }
+
+  const unquoted = trimmedQuestion.endsWith('"')
+    ? trimmedQuestion.slice(1, -1).trim()
+    : trimmedQuestion.slice(1).trim();
+
+  if (!unquoted) {
+    return <p>Please provide a question inside the quotes. Example: ask "Tell me about your projects."</p>;
   }
 
   try {
     const { answer } = await generateAskResponse({
-      question: trimmedQuestion,
+      question: unquoted,
       portfolio: getPortfolioSnapshot(),
     });
     return <TypingResponse text={answer} />;

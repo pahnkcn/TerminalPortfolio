@@ -27,15 +27,15 @@ const QUICK_ACTIONS = ['help', 'aboutme', 'projects', 'contact'];
 const AI_PROMPTS = [
   {
     label: 'Impact highlights',
-    command: 'ask What measurable impact did you drive in your roles?',
+    command: 'ask "What measurable impact did you drive in your roles?"',
   },
   {
     label: 'Cloud systems',
-    command: 'ask Which cloud systems or architectures are you most proud of?',
+    command: 'ask "Which cloud systems or architectures are you most proud of?"',
   },
   {
     label: 'CI/CD improvements',
-    command: 'ask How did you improve CI/CD speed and reliability?',
+    command: 'ask "How did you improve CI/CD speed and reliability?"',
   },
 ];
 
@@ -148,6 +148,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
     if (booting) return;
     if (commandStr.trim().toLowerCase() === 'clear') {
         setHistory([]);
+        setBootLines([]);
         setInput('');
         setCommandHistory(prev => [commandStr, ...prev]);
         setHistoryIndex(-1);
@@ -229,6 +230,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
     } else if (e.ctrlKey && e.key === 'l') {
         e.preventDefault();
         setHistory([]);
+        setBootLines([]);
     }
   };
 
@@ -287,7 +289,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
                 {isAiConfigured ? (
-                  <>Try typing <span className="text-foreground">ask &lt;question&gt;</span> or tap a prompt.</>
+                  <>Try typing <span className="text-foreground">ask "&lt;question&gt;"</span> or tap a prompt.</>
                 ) : (
                   <>AI needs an API key in <span className="text-foreground">.env.local</span> to answer questions.</>
                 )}
