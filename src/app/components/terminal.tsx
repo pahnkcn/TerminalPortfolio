@@ -444,24 +444,26 @@ export function Terminal({ aiStatus }: TerminalProps) {
           </div>
           {history.map((item, index) => (
             <div key={index} className="space-y-1 animate-rise">
-              <div className="flex items-center gap-2">
+              <div className="grid grid-cols-[auto,1fr] items-start gap-x-2">
                 <span className="text-accent drop-shadow">user@portfolio:~$</span>
-                <span>{item.command}</span>
+                <span className="min-w-0 whitespace-pre-wrap break-words">{item.command}</span>
               </div>
-              <div className="text-foreground/90">{item.output}</div>
+              <div className="terminal-output text-foreground/90">{item.output}</div>
             </div>
           ))}
           {!isProcessing && !booting && (
-            <div className="flex items-center gap-2 animate-rise">
+            <div className="grid grid-cols-[auto,1fr] items-start gap-x-2 animate-rise">
               <span className="text-accent drop-shadow">user@portfolio:~$</span>
-              <span className="text-foreground/90">{typedInput}</span>
-              <span className="h-4 w-2 rounded-sm bg-primary shadow-[0_0_12px_rgba(152,251,152,0.7)] animate-blink"></span>
-              {suggestionSuffix && (
-                <span className="text-muted-foreground/70">
-                  <span className="text-accent/90">{primarySuggestion.slice(0, typedInput.length)}</span>
-                  {suggestionSuffix}
-                </span>
-              )}
+              <span className="min-w-0 whitespace-pre-wrap break-words text-foreground/90">
+                {typedInput}
+                <span className="inline-block h-[1em] w-2 align-text-bottom rounded-sm bg-primary shadow-[0_0_12px_rgba(152,251,152,0.7)] animate-blink"></span>
+                {suggestionSuffix && (
+                  <span className="text-muted-foreground/70">
+                    <span className="text-accent/90">{primarySuggestion.slice(0, typedInput.length)}</span>
+                    {suggestionSuffix}
+                  </span>
+                )}
+              </span>
             </div>
           )}
           {!isProcessing && !booting && suggestions.length > 1 && (
