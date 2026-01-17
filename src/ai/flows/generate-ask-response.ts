@@ -120,7 +120,7 @@ const PROMPT_INJECTION_PATTERNS: RegExp[] = [
    * ===================================================== */
   /\b(api|secret|private)\s*key\b/i,
   /\b(openai|gemini|anthropic)\s*key\b/i,
-  /\btoken\b/i,
+  /\b(api|secret|auth)\s*token\b/i,
 
   /* =====================================================
    * STRUCTURAL / DELIMITER INJECTION
