@@ -369,7 +369,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
         <div className="absolute inset-0 bg-[linear-gradient(180deg,_rgba(255,255,255,0.04)_0%,_rgba(0,0,0,0)_35%,_rgba(0,0,0,0.12)_100%)]" />
         <div className="absolute inset-x-0 -top-1/2 h-[200%] animate-scanline bg-[linear-gradient(180deg,_rgba(255,255,255,0)_0%,_rgba(152,251,152,0.08)_50%,_rgba(255,255,255,0)_100%)]" />
       </div>
-      <ScrollArea className="relative h-full" ref={scrollAreaRef}>
+      <ScrollArea className="relative h-full terminal-scroll-area" ref={scrollAreaRef}>
         <div className="flex flex-col gap-5 pb-6">
           <div className="rounded-xl border border-border/60 bg-background/70 px-4 py-3 shadow-[0_0_25px_rgba(152,251,152,0.12)]">
             <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
