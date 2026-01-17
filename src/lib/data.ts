@@ -6,22 +6,33 @@ export const ABOUTME_TEXT = `Dev/DevOps Engineer. I build and automate scalable,
 Passionate about CI/CD, Infrastructure as Code, and making developers' lives easier.`;
 
 export const SKILLS = [
-  'Terraform',
-  'AWS',
-  'Kubernetes',
-  'Docker',
-  'CI/CD',
-  'GitHub Actions',
-  'Linux',
-  'Prometheus',
-  'Grafana',
-  'Ansible',
+  {
+    category: 'Cloud & IaC',
+    items: ['AWS', 'Terraform', 'Ansible'],
+  },
+  {
+    category: 'Containers & Orchestration',
+    items: ['Docker', 'Kubernetes'],
+  },
+  {
+    category: 'CI/CD & Automation',
+    items: ['CI/CD', 'GitHub Actions'],
+  },
+  {
+    category: 'Monitoring & Observability',
+    items: ['Prometheus', 'Grafana'],
+  },
+  {
+    category: 'Systems & Platforms',
+    items: ['Linux'],
+  },
 ];
 
 export const PROJECTS = [
   {
     name: 'auto-scaler-cloud',
     title: 'Auto-Scaling Cloud Infrastructure',
+    category: 'Infrastructure Automation',
     technologies: 'Terraform, AWS (EC2, ASG, ELB), Ansible',
     description: 'A project to create a self-healing and auto-scaling web server environment on AWS using Infrastructure as Code.',
     link: 'https://github.com'
@@ -29,6 +40,7 @@ export const PROJECTS = [
   {
     name: 'kubernetes-gitops',
     title: 'Kubernetes GitOps Pipeline',
+    category: 'Kubernetes & GitOps',
     technologies: 'Kubernetes, Docker, ArgoCD, Helm, GitHub Actions',
     description: 'Implemented a GitOps workflow for deploying microservices to a Kubernetes cluster.',
     link: 'https://github.com'
@@ -36,6 +48,7 @@ export const PROJECTS = [
   {
     name: 'serverless-api',
     title: 'Serverless REST API',
+    category: 'Serverless Platforms',
     technologies: 'AWS Lambda, API Gateway, DynamoDB, Serverless Framework',
     description: 'Built a highly available and scalable serverless REST API for a social media application backend.',
     link: 'https://github.com'

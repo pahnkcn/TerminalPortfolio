@@ -179,23 +179,52 @@ const getAboutMe = () => (
 );
 
 const getSkills = () => (
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2">
-    {SKILLS.map(skill => <span key={skill}>{skill}</span>)}
+  <div className="space-y-4">
+    {SKILLS.map(group => (
+      <div key={group.category}>
+        <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{group.category}</p>
+        <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2">
+          {group.items.map(item => <span key={item}>{item}</span>)}
+        </div>
+      </div>
+    ))}
   </div>
 );
 
-const getProjects = () => (
-  <div>
-    <p>Here are my projects. Use 'project &lt;name&gt;' to see details.</p>
-    <ul className="list-disc list-inside mt-2">
-      {PROJECTS.map(p => (
-        <li key={p.name}>
-          <span className="font-bold w-36 inline-block">{p.name}</span> - {p.title}
-        </li>
+type ProjectItem = (typeof PROJECTS)[number];
+
+const groupProjectsByCategory = (projects: ProjectItem[]) =>
+  projects.reduce((acc, project) => {
+    const category = project.category ?? 'Other';
+    const existingGroup = acc.find(group => group.category === category);
+    if (existingGroup) {
+      existingGroup.items.push(project);
+    } else {
+      acc.push({ category, items: [project] });
+    }
+    return acc;
+  }, [] as { category: string; items: ProjectItem[] }[]);
+
+const getProjects = () => {
+  const groupedProjects = groupProjectsByCategory(PROJECTS);
+  return (
+    <div className="space-y-4">
+      <p>Here are my projects. Use 'project &lt;name&gt;' to see details.</p>
+      {groupedProjects.map(group => (
+        <div key={group.category}>
+          <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{group.category}</p>
+          <ul className="list-disc list-inside mt-2">
+            {group.items.map(project => (
+              <li key={project.name}>
+                <span className="font-bold w-36 inline-block">{project.name}</span> - {project.title}
+              </li>
+            ))}
+          </ul>
+        </div>
       ))}
-    </ul>
-  </div>
-);
+    </div>
+  );
+};
 
 const getProjectDetails = (name: string) => {
   const project = PROJECTS.find(p => p.name.toLowerCase() === name.toLowerCase());
@@ -206,6 +235,7 @@ const getProjectDetails = (name: string) => {
   return (
       <div>
           <h3 className="text-lg font-bold text-accent">{project.title}</h3>
+          <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{project.category}</p>
           <p className="font-mono text-sm text-muted-foreground">{project.technologies}</p>
           <p className="mt-2 whitespace-pre-wrap">{project.description}</p>
           {project.link && <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline mt-2 inline-block">View on GitHub</a>}
@@ -242,10 +272,14 @@ const getContact = () => (
 
 const getPortfolioSnapshot = () => ({
   aboutMe: ABOUTME_TEXT,
-  skills: SKILLS,
+  skills: SKILLS.map(group => ({
+    category: group.category,
+    items: group.items,
+  })),
   projects: PROJECTS.map(project => ({
     name: project.name,
     title: project.title,
+    category: project.category,
     technologies: project.technologies,
     description: project.description,
     link: project.link,

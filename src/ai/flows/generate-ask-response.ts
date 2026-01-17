@@ -6,9 +6,15 @@ import { z } from 'zod';
 const PortfolioProjectSchema = z.object({
   name: z.string(),
   title: z.string(),
+  category: z.string(),
   technologies: z.string(),
   description: z.string(),
   link: z.string().optional().nullable(),
+});
+
+const PortfolioSkillGroupSchema = z.object({
+  category: z.string(),
+  items: z.array(z.string()),
 });
 
 const PortfolioExperienceSchema = z.object({
@@ -26,7 +32,7 @@ const PortfolioContactSchema = z.object({
 
 const PortfolioSnapshotSchema = z.object({
   aboutMe: z.string(),
-  skills: z.array(z.string()),
+  skills: z.array(PortfolioSkillGroupSchema),
   projects: z.array(PortfolioProjectSchema),
   experience: z.array(PortfolioExperienceSchema),
   contact: z.array(PortfolioContactSchema),
