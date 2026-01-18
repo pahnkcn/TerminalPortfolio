@@ -241,59 +241,59 @@ const getClosestCommand = (input: string) => {
 const getHelp = () => (
   <div className="space-y-6 mt-2">
     <div className="space-y-3">
-      <div className="border-l-2 border-accent/20 pl-4">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
         <HelpCommand command="help">help</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">Show this help message with all available commands</div>
+        <div className="text-xs text-muted-foreground">Show this help message with all available commands</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
         <HelpCommand command='ask "'>ask "&lt;question&gt;"</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">Ask me anything! Get AI-powered responses to your questions</div>
+        <div className="text-xs text-muted-foreground">Ask me anything! Get AI-powered responses to your questions</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
         <HelpCommand command="aboutme">aboutme</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">Learn more about my background and what I do</div>
+        <div className="text-xs text-muted-foreground">Learn more about my background and what I do</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
         <HelpCommand command="skills">skills</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">View all my technical skills organized by category</div>
+        <div className="text-xs text-muted-foreground">View all my technical skills organized by category</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
-        <HelpCommand command={'skill <name>'}>skill &lt;name&gt;</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">Get detailed information about a specific skill</div>
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command={'skill '}>skill &lt;name&gt;</HelpCommand>
+        <div className="text-xs text-muted-foreground">Get detailed information about a specific skill</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
         <HelpCommand command="projects">projects</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">Browse my portfolio of projects</div>
+        <div className="text-xs text-muted-foreground">Browse my portfolio of projects</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
-        <HelpCommand command={'project <name>'}>project &lt;name&gt;</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">View detailed information about a specific project</div>
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command={'project '}>project &lt;name&gt;</HelpCommand>
+        <div className="text-xs text-muted-foreground">View detailed information about a specific project</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
         <HelpCommand command="experience">experience</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">View my work experience and professional history</div>
+        <div className="text-xs text-muted-foreground">View my work experience and professional history</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
         <HelpCommand command="education">education</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">View my educational background</div>
+        <div className="text-xs text-muted-foreground">View my educational background</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
         <HelpCommand command="resume">resume</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">Get a link to download my full resume</div>
+        <div className="text-xs text-muted-foreground">Get a link to download my full resume</div>
       </div>
 
-      <div className="border-l-2 border-accent/20 pl-4">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
         <HelpCommand command="contact">contact</HelpCommand>
-        <div className="text-xs text-muted-foreground mb-1">View my contact information and social links</div>
+        <div className="text-xs text-muted-foreground">View my contact information and social links</div>
       </div>
 
       <div className="border-l-2 border-accent/20 pl-4">
@@ -311,16 +311,16 @@ const getHelp = () => (
 );
 
 const getAboutMe = () => (
-  <p className="whitespace-pre-wrap text-sm">{ABOUTME_TEXT}</p>
+  <p className="whitespace-pre-wrap text-sm mt-2">{ABOUTME_TEXT}</p>
 );
 
 const getSkills = () => (
-  <div className="space-y-4 text-sm">
+  <div className="space-y-4 text-sm mt-2">
     <p>Use 'skill &lt;name&gt;' to view details.</p>
     {SKILLS.map(group => (
       <div key={group.category}>
         <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{group.category}</p>
-        <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2">
           {group.items.map(item => <span key={item}>{item}</span>)}
         </div>
       </div>
@@ -372,7 +372,7 @@ const getSkillDetails = (name: string) => {
   }
 
   return (
-    <div className="text-sm">
+    <div className="text-sm mt-2">
       <h3 className="font-bold text-accent">{skill.name}</h3>
       <p className="text-xs uppercase tracking-[0.2em] text-accent/80">
         {skill.level}{typeof skill.score === 'number' ? ` · ${formatSkillScore(skill.score)}` : ''}
@@ -404,12 +404,12 @@ const groupProjectsByCategory = (projects: ProjectItem[]) =>
 const getProjects = () => {
   const groupedProjects = groupProjectsByCategory(PROJECTS);
   return (
-    <div className="space-y-4 text-sm">
+    <div className="space-y-4 text-sm mt-2">
       <p>Here are my projects. Use 'project &lt;name&gt;' to see details.</p>
       {groupedProjects.map(group => (
         <div key={group.category}>
           <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{group.category}</p>
-          <ul className="list-disc list-inside mt-2">
+          <ul className="list-disc list-inside">
             {group.items.map(project => (
               <li key={project.name}>
                 <span className="font-bold w-36 inline-block">{project.name}</span> - {project.title}
@@ -430,7 +430,7 @@ const getProjectDetails = (name: string) => {
   }
 
   return (
-      <div className="text-sm">
+      <div className="text-sm mt-2">
           <h3 className="font-bold text-accent">{project.title}</h3>
           <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{project.category}</p>
           <p className="font-mono text-muted-foreground">{project.technologies}</p>
@@ -442,7 +442,7 @@ const getProjectDetails = (name: string) => {
 
 
 const getExperience = () => (
-    <div className="space-y-4 text-sm">
+    <div className="space-y-4 text-sm mt-2">
       {EXPERIENCE.map((exp, index) => (
         <div key={index}>
           <h3 className="font-bold text-accent">{exp.role} @ {exp.company}</h3>
@@ -454,7 +454,7 @@ const getExperience = () => (
 );
 
 const getEducation = () => (
-  <div className="space-y-4 text-sm">
+  <div className="space-y-4 text-sm mt-2">
     {EDUCATION.map((edu, index) => (
       <div key={`${edu.school}-${index}`}>
         <h3 className="font-bold text-accent">{edu.program}</h3>
@@ -470,7 +470,7 @@ const getEducation = () => (
 );
 
 const getResume = () => (
-  <div className="space-y-4 text-sm">
+  <div className="space-y-4 text-sm mt-2">
     <div>
       <h3 className="font-bold text-accent">{RESUME.headline}</h3>
       <p className="text-xs uppercase tracking-[0.2em] text-accent/80">
@@ -483,7 +483,8 @@ const getResume = () => (
         <li key={item}>{item}</li>
       ))}
     </ul>
-    {RESUME.downloadLink ? (
+    <div className="mt-2">
+      {RESUME.downloadLink ? (
       <a
         href={RESUME.downloadLink}
         target="_blank"
@@ -495,11 +496,12 @@ const getResume = () => (
     ) : (
       <p className="text-muted-foreground">Resume download link available on request.</p>
     )}
+    </div>
   </div>
 );
 
 const getContact = () => (
-  <div className="space-y-2 text-sm">
+  <div className="space-y-1 text-sm mt-2">
     {CONTACT_INFO.map(item => (
       <div key={item.name} className="flex items-center gap-4">
         <span className="w-16">{item.name}:</span>
