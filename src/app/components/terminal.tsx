@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { getCommandOutput } from '@/lib/commands';
+import { getCommandOutput, TERMINAL_COMMAND_EVENT } from '@/lib/commands';
 import { generatePromptSuggestions } from '@/ai/flows/generate-prompt-suggestions';
 import { COMMANDS, PROJECTS, SKILL_DETAILS } from '@/lib/data';
 
@@ -329,6 +329,19 @@ export function Terminal({ aiStatus }: TerminalProps) {
     syncCursor(action.length);
     focusInput();
   }, [booting, focusInput, isProcessing, syncCursor]);
+
+  useEffect(() => {
+    const handleTerminalCommand = (event: Event) => {
+      const detail = (event as CustomEvent<{ command?: string }>).detail;
+      if (!detail?.command) return;
+      handleQuickAction(detail.command);
+    };
+
+    window.addEventListener(TERMINAL_COMMAND_EVENT, handleTerminalCommand);
+    return () => {
+      window.removeEventListener(TERMINAL_COMMAND_EVENT, handleTerminalCommand);
+    };
+  }, [handleQuickAction]);
 
   const applySuggestion = useCallback(() => {
     if (!activeSuggestion || !suggestionSuffix || !isCursorAtEnd) return false;
