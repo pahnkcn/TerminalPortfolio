@@ -45,51 +45,61 @@ export const SKILL_DETAILS = [
   {
     name: 'AWS',
     level: 'Advanced',
+    score: 92,
     summary: 'Designing and automating AWS infrastructure (EC2, ASG, ELB, VPC, IAM) with security, reliability, and cost awareness.',
   },
   {
     name: 'Terraform',
     level: 'Advanced',
+    score: 90,
     summary: 'Building modular IaC stacks, managing remote state, and standardizing reusable infrastructure patterns.',
   },
   {
     name: 'Ansible',
     level: 'Intermediate',
+    score: 78,
     summary: 'Writing playbooks for provisioning, configuration management, and repeatable environment setups.',
   },
   {
     name: 'Docker',
     level: 'Advanced',
+    score: 88,
     summary: 'Containerizing applications with multi-stage builds, optimized images, and reproducible dev workflows.',
   },
   {
     name: 'Kubernetes',
     level: 'Intermediate',
+    score: 76,
     summary: 'Operating workloads with deployments, services, ingress, and basic cluster troubleshooting.',
   },
   {
     name: 'CI/CD',
     level: 'Advanced',
+    score: 91,
     summary: 'Designing pipelines for build, test, and deploy workflows with quality gates and environment promotion.',
   },
   {
     name: 'GitHub Actions',
     level: 'Advanced',
+    score: 87,
     summary: 'Authoring reusable workflows, matrix builds, and secure secrets handling for automated delivery.',
   },
   {
     name: 'Prometheus',
     level: 'Intermediate',
+    score: 74,
     summary: 'Setting up metrics collection, alert rules, and monitoring baselines for services and infrastructure.',
   },
   {
     name: 'Grafana',
     level: 'Intermediate',
+    score: 72,
     summary: 'Building dashboards and alert visualizations for performance and reliability insights.',
   },
   {
     name: 'Linux',
     level: 'Advanced',
+    score: 93,
     summary: 'Daily CLI usage, system tuning, service management, and troubleshooting in production environments.',
   },
 ];

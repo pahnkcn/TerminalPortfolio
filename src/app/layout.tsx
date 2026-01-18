@@ -5,6 +5,9 @@ import { Toaster } from "@/components/ui/toaster"
 export const metadata: Metadata = {
   title: 'CLI-folio',
   description: 'A developer portfolio with a Terminal / CLI experience theme.',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

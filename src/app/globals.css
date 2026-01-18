@@ -56,3 +56,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .terminal-scroll-area [data-radix-scroll-area-viewport] {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .terminal-scroll-area [data-radix-scroll-area-viewport]::-webkit-scrollbar {
+    display: none;
+  }
+
+  .terminal-scroll-area [data-radix-scroll-area-scrollbar],
+  .terminal-scroll-area [data-radix-scroll-area-corner] {
+    display: none;
+  }
+
+  .terminal-output {
+    text-align: justify;
+    text-justify: inter-word;
+    text-align-last: left;
+    text-align-last: start;
+    hyphens: auto;
+  }
+}

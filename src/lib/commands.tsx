@@ -13,6 +13,7 @@ import {
   getPortfolioSnapshot,
 } from './data';
 import { generateAskResponse } from '@/ai/flows/generate-ask-response';
+import { generateFortuneResponse } from '@/ai/flows/generate-fortune-response';
 import { useToast } from "@/hooks/use-toast"
 
 type AiErrorInfo = {
@@ -20,6 +21,8 @@ type AiErrorInfo = {
   description: string;
   variant?: 'default' | 'destructive';
 };
+
+export const TERMINAL_COMMAND_EVENT = 'terminal:command';
 
 const parseAiError = (error: unknown): AiErrorInfo => {
   const message = error instanceof Error ? error.message : '';
@@ -70,6 +73,30 @@ const renderAiError = (error: unknown) => {
   const info = parseAiError(error);
   return <AiError {...info} />;
 };
+
+const emitTerminalCommand = (command: string) => {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(
+    new CustomEvent(TERMINAL_COMMAND_EVENT, {
+      detail: { command },
+    }),
+  );
+};
+
+type HelpCommandProps = {
+  command: string;
+  children: React.ReactNode;
+};
+
+const HelpCommand = ({ command, children }: HelpCommandProps) => (
+  <button
+    type="button"
+    onClick={() => emitTerminalCommand(command)}
+    className="block w-full cursor-text border-0 bg-transparent p-0 text-left font-mono text-sm focus:outline-none select-text"
+  >
+    {children}
+  </button>
+);
 
 type TypingResponseProps = {
   text: string;
@@ -127,6 +154,46 @@ const TypingResponse = ({ text, className }: TypingResponseProps) => {
   );
 };
 
+const SKILL_SCORE_MAX = 100;
+const SKILL_BAR_SEGMENTS = 22;
+
+const clampScore = (score: number) => Math.min(SKILL_SCORE_MAX, Math.max(0, score));
+
+const buildAsciiBar = (score: number) => {
+  const normalized = clampScore(score);
+  const filled = Math.round((normalized / SKILL_SCORE_MAX) * SKILL_BAR_SEGMENTS);
+  return `${'#'.repeat(filled)}${'-'.repeat(SKILL_BAR_SEGMENTS - filled)}`;
+};
+
+const formatSkillScore = (score: number) => `${Math.round(score)}%`;
+
+const CAT_ART = [
+  '⠀⠀⠀⢀⡴⠲⣄⠀⠀⢀⡶⠲⡄⠀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+  '⣀⣀⣀⣾⠁⠀⠹⠿⠟⠟⠀⠀⠙⣛⣉⡻⠿⠋⣿⣷⢦⣄⠀⠀⠀⠀⠀⠀',
+  '⠭⠭⣽⠇⠀⠶⠀⢴⣦⠀⠶⠆⠸⠯⠭⠄⠀⠀⠀⠀⠀⠙⢧⡀⠀⢀⣤⣤',
+  '⠀⠀⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⣤⣾⣻⡟',
+  '⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣧⠽⠋⠀',
+  '⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⠀⠀⠀⠀',
+  '⠀⠀⢷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡟⠀⠀⠀⠀',
+  '⠀⠀⠈⠳⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠟⠀⠀⠀⠀⠀',
+  '⠀⠀⠀⠀⠉⠿⠟⠛⠛⠻⠾⠛⠛⠛⠛⠻⠟⠛⠛⠻⠾⠃⠀⠀⠀⠀⠀⠀'
+].join('\n');
+
+const COFFEE_ART = [
+  '   ( (',
+  '    ) )',
+  '  ........',
+  '  |      |]',
+  '  \\      /',
+  "   `----'",
+].join('\n');
+
+const COFFEE_OUTPUT = [COFFEE_ART, '', 'Coffee deployed.'].join('\n');
+
+const renderAscii = (text: string, className = 'text-accent') => (
+  <pre className={`whitespace-pre-wrap ${className}`}>{text}</pre>
+);
+
 const getEditDistance = (source: string, target: string) => {
   const sourceLength = source.length;
   const targetLength = target.length;
@@ -171,39 +238,129 @@ const getClosestCommand = (input: string) => {
   return closestDistance <= maxDistance ? closestCommand : '';
 };
 
-
 const getHelp = () => (
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2">
-    {COMMANDS.map(cmd => {
-      const label = cmd === 'project'
-        ? 'project <name>'
-        : cmd === 'skill'
-          ? 'skill <name>'
-          : cmd === 'ask'
-            ? 'ask "<question>"'
-            : cmd;
-      return <span key={cmd}>{label}</span>;
-    })}
+  <div className="space-y-6 mt-2">
+    <div className="space-y-3">
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command="help">help</HelpCommand>
+        <div className="text-xs text-muted-foreground">Show this help message with all available commands</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command='ask "'>ask "&lt;question&gt;"</HelpCommand>
+        <div className="text-xs text-muted-foreground">Ask me anything! Get AI-powered responses to your questions</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command="aboutme">aboutme</HelpCommand>
+        <div className="text-xs text-muted-foreground">Learn more about my background and what I do</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command="skills">skills</HelpCommand>
+        <div className="text-xs text-muted-foreground">View all my technical skills organized by category</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command={'skill '}>skill &lt;name&gt;</HelpCommand>
+        <div className="text-xs text-muted-foreground">Get detailed information about a specific skill</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command="projects">projects</HelpCommand>
+        <div className="text-xs text-muted-foreground">Browse my portfolio of projects</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command={'project '}>project &lt;name&gt;</HelpCommand>
+        <div className="text-xs text-muted-foreground">View detailed information about a specific project</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command="experience">experience</HelpCommand>
+        <div className="text-xs text-muted-foreground">View my work experience and professional history</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command="education">education</HelpCommand>
+        <div className="text-xs text-muted-foreground">View my educational background</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command="resume">resume</HelpCommand>
+        <div className="text-xs text-muted-foreground">Get a link to download my full resume</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4 mb-1">
+        <HelpCommand command="contact">contact</HelpCommand>
+        <div className="text-xs text-muted-foreground">View my contact information and social links</div>
+      </div>
+
+      <div className="border-l-2 border-accent/20 pl-4">
+        <HelpCommand command="clear">clear</HelpCommand>
+        <div className="text-xs text-muted-foreground">Clear the terminal screen</div>
+      </div>
+    <div className="mt-4"></div>
+  </div>
+
+    <div className="text-xs text-muted-foreground border-t border-accent/20 pt-3">
+      <p>💡 <strong>Tip:</strong> Use arrow keys to navigate through command history!</p>
+      <p>🤖 <strong>AI Commands:</strong> 'ask' and 'fortine' use AI with a 15-second delay between requests</p>
+    </div>
   </div>
 );
 
 const getAboutMe = () => (
-  <p className="whitespace-pre-wrap">{ABOUTME_TEXT}</p>
+  <p className="whitespace-pre-wrap text-sm mt-2">{ABOUTME_TEXT}</p>
 );
 
 const getSkills = () => (
-  <div className="space-y-4">
+  <div className="space-y-4 text-sm mt-2">
     <p>Use 'skill &lt;name&gt;' to view details.</p>
     {SKILLS.map(group => (
       <div key={group.category}>
         <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{group.category}</p>
-        <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2">
           {group.items.map(item => <span key={item}>{item}</span>)}
         </div>
       </div>
     ))}
   </div>
 );
+
+const FORTUNE_STORAGE_KEY = 'terminal-portfolio:fortune';
+
+const getLocalDayKey = () => {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
+};
+
+const readDailyFortune = (dayKey: string) => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(FORTUNE_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { dayKey?: string; fortune?: string };
+    if (parsed.dayKey === dayKey && parsed.fortune) return parsed.fortune;
+  } catch {
+    return null;
+  }
+  return null;
+};
+
+const writeDailyFortune = (dayKey: string, fortune: string) => {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(
+      FORTUNE_STORAGE_KEY,
+      JSON.stringify({ dayKey, fortune })
+    );
+  } catch {
+    return;
+  }
+};
 
 const normalizeLookupValue = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, '');
 
@@ -215,9 +372,16 @@ const getSkillDetails = (name: string) => {
   }
 
   return (
-    <div>
-      <h3 className="text-lg font-bold text-accent">{skill.name}</h3>
-      <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{skill.level}</p>
+    <div className="text-sm mt-2">
+      <h3 className="font-bold text-accent">{skill.name}</h3>
+      <p className="text-xs uppercase tracking-[0.2em] text-accent/80">
+        {skill.level}{typeof skill.score === 'number' ? ` · ${formatSkillScore(skill.score)}` : ''}
+      </p>
+      {typeof skill.score === 'number' && (
+        <pre className="mt-2 font-mono text-sm text-foreground/80">
+          [{buildAsciiBar(skill.score)}]
+        </pre>
+      )}
       <p className="mt-2 whitespace-pre-wrap">{skill.summary}</p>
     </div>
   );
@@ -240,12 +404,12 @@ const groupProjectsByCategory = (projects: ProjectItem[]) =>
 const getProjects = () => {
   const groupedProjects = groupProjectsByCategory(PROJECTS);
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 text-sm mt-2">
       <p>Here are my projects. Use 'project &lt;name&gt;' to see details.</p>
       {groupedProjects.map(group => (
         <div key={group.category}>
           <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{group.category}</p>
-          <ul className="list-disc list-inside mt-2">
+          <ul className="list-disc list-inside">
             {group.items.map(project => (
               <li key={project.name}>
                 <span className="font-bold w-36 inline-block">{project.name}</span> - {project.title}
@@ -266,10 +430,10 @@ const getProjectDetails = (name: string) => {
   }
 
   return (
-      <div>
-          <h3 className="text-lg font-bold text-accent">{project.title}</h3>
+      <div className="text-sm mt-2">
+          <h3 className="font-bold text-accent">{project.title}</h3>
           <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{project.category}</p>
-          <p className="font-mono text-sm text-muted-foreground">{project.technologies}</p>
+          <p className="font-mono text-muted-foreground">{project.technologies}</p>
           <p className="mt-2 whitespace-pre-wrap">{project.description}</p>
           {project.link && <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline mt-2 inline-block">View on GitHub</a>}
       </div>
@@ -278,11 +442,11 @@ const getProjectDetails = (name: string) => {
 
 
 const getExperience = () => (
-    <div className="space-y-4">
+    <div className="space-y-4 text-sm mt-2">
       {EXPERIENCE.map((exp, index) => (
         <div key={index}>
           <h3 className="font-bold text-accent">{exp.role} @ {exp.company}</h3>
-          <p className="text-sm text-muted-foreground">{exp.period}</p>
+          <p className="text-muted-foreground">{exp.period}</p>
           <p className="mt-1">{exp.description}</p>
         </div>
       ))}
@@ -290,11 +454,11 @@ const getExperience = () => (
 );
 
 const getEducation = () => (
-  <div className="space-y-4">
+  <div className="space-y-4 text-sm mt-2">
     {EDUCATION.map((edu, index) => (
       <div key={`${edu.school}-${index}`}>
         <h3 className="font-bold text-accent">{edu.program}</h3>
-        <p className="text-sm text-muted-foreground">{edu.school} · {edu.period}</p>
+        <p className="text-muted-foreground">{edu.school} · {edu.period}</p>
         <ul className="mt-2 list-disc list-inside space-y-1">
           {edu.highlights.map((highlight, highlightIndex) => (
             <li key={`${edu.school}-${highlightIndex}`}>{highlight}</li>
@@ -306,9 +470,9 @@ const getEducation = () => (
 );
 
 const getResume = () => (
-  <div className="space-y-4">
+  <div className="space-y-4 text-sm mt-2">
     <div>
-      <h3 className="text-lg font-bold text-accent">{RESUME.headline}</h3>
+      <h3 className="font-bold text-accent">{RESUME.headline}</h3>
       <p className="text-xs uppercase tracking-[0.2em] text-accent/80">
         Updated {RESUME.lastUpdated}
       </p>
@@ -319,7 +483,8 @@ const getResume = () => (
         <li key={item}>{item}</li>
       ))}
     </ul>
-    {RESUME.downloadLink ? (
+    <div className="mt-2">
+      {RESUME.downloadLink ? (
       <a
         href={RESUME.downloadLink}
         target="_blank"
@@ -331,11 +496,12 @@ const getResume = () => (
     ) : (
       <p className="text-muted-foreground">Resume download link available on request.</p>
     )}
+    </div>
   </div>
 );
 
 const getContact = () => (
-  <div className="space-y-2">
+  <div className="space-y-1 text-sm mt-2">
     {CONTACT_INFO.map(item => (
       <div key={item.name} className="flex items-center gap-4">
         <span className="w-16">{item.name}:</span>
@@ -371,7 +537,23 @@ const getAskResponse = async (question: string) => {
       question: unquoted,
       portfolio: getPortfolioSnapshot(),
     });
-    return <TypingResponse text={answer} />;
+    return <TypingResponse text={answer} className="text-sm mt-2" />;
+  } catch (error) {
+    console.error(error);
+    return renderAiError(error);
+  }
+};
+
+const getFortuneResponse = async () => {
+  const dayKey = getLocalDayKey();
+  const cached = readDailyFortune(dayKey);
+  if (cached) {
+    return <TypingResponse text={cached} className="text-accent text-sm mt-2" />;
+  }
+  try {
+    const { fortune } = await generateFortuneResponse();
+    writeDailyFortune(dayKey, fortune);
+    return <TypingResponse text={fortune} className="text-accent text-sm mt-2" />;
   } catch (error) {
     console.error(error);
     return renderAiError(error);
@@ -412,6 +594,12 @@ export const getCommandOutput = async (commandStr: string): Promise<React.ReactN
       return await getAskResponse(argsText);
     case 'clear':
       return ''; // special case handled in terminal component
+    case 'cat':
+      return renderAscii(CAT_ART);
+    case 'fortune':
+      return await getFortuneResponse();
+    case 'coffee':
+      return renderAscii(COFFEE_OUTPUT);
     default:
       const closestCommand = getClosestCommand(command);
       if (closestCommand) {
