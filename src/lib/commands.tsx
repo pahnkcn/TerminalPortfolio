@@ -13,6 +13,7 @@ import {
   getPortfolioSnapshot,
 } from './data';
 import { generateAskResponse } from '@/ai/flows/generate-ask-response';
+import { generateFortuneResponse } from '@/ai/flows/generate-fortune-response';
 import { useToast } from "@/hooks/use-toast"
 
 type AiErrorInfo = {
@@ -163,17 +164,6 @@ const COFFEE_ART = [
 
 const COFFEE_OUTPUT = [COFFEE_ART, '', 'Coffee deployed.'].join('\n');
 
-const FORTUNES = [
-  'Keep it simple, keep it shipping.',
-  'Automate the boring stuff.',
-  'Uptime is a feature.',
-  'No alerts is the best alert.',
-  'Ship small, learn fast.',
-  'Logs tell stories. Listen.',
-];
-
-const pickRandom = <T,>(items: T[]) => items[Math.floor(Math.random() * items.length)];
-
 const renderAscii = (text: string, className = 'text-accent') => (
   <pre className={`whitespace-pre-wrap ${className}`}>{text}</pre>
 );
@@ -255,6 +245,40 @@ const getSkills = () => (
     ))}
   </div>
 );
+
+const FORTUNE_STORAGE_KEY = 'terminal-portfolio:fortune';
+
+const getLocalDayKey = () => {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
+};
+
+const readDailyFortune = (dayKey: string) => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(FORTUNE_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { dayKey?: string; fortune?: string };
+    if (parsed.dayKey === dayKey && parsed.fortune) return parsed.fortune;
+  } catch {
+    return null;
+  }
+  return null;
+};
+
+const writeDailyFortune = (dayKey: string, fortune: string) => {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(
+      FORTUNE_STORAGE_KEY,
+      JSON.stringify({ dayKey, fortune })
+    );
+  } catch {
+    return;
+  }
+};
 
 const normalizeLookupValue = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, '');
 
@@ -436,6 +460,22 @@ const getAskResponse = async (question: string) => {
   }
 };
 
+const getFortuneResponse = async () => {
+  const dayKey = getLocalDayKey();
+  const cached = readDailyFortune(dayKey);
+  if (cached) {
+    return <TypingResponse text={cached} className="text-accent" />;
+  }
+  try {
+    const { fortune } = await generateFortuneResponse();
+    writeDailyFortune(dayKey, fortune);
+    return <TypingResponse text={fortune} className="text-accent" />;
+  } catch (error) {
+    console.error(error);
+    return renderAiError(error);
+  }
+};
+
 export const getCommandOutput = async (commandStr: string): Promise<React.ReactNode> => {
   const trimmed = commandStr.trim();
   if (!trimmed) return '';
@@ -473,7 +513,7 @@ export const getCommandOutput = async (commandStr: string): Promise<React.ReactN
     case 'cat':
       return renderAscii(CAT_ART);
     case 'fortune':
-      return <p className="text-accent">{pickRandom(FORTUNES)}</p>;
+      return await getFortuneResponse();
     case 'coffee':
       return renderAscii(COFFEE_OUTPUT);
     default:

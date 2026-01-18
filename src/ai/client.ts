@@ -76,7 +76,7 @@ const resolveProvider = (provider?: AiProvider): AiProvider => {
   return 'gemini';
 };
 
-const getClientIdentifier = async () => {
+export const getClientIdentifier = async () => {
   const requestHeaders = await headers();
   const forwardedFor = requestHeaders.get('x-forwarded-for');
   const realIp = requestHeaders.get('x-real-ip');
