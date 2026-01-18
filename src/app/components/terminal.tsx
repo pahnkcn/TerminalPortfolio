@@ -442,14 +442,14 @@ export function Terminal({ aiStatus }: TerminalProps) {
       <ScrollArea className="relative h-full terminal-scroll-area" ref={scrollAreaRef}>
         <div className="flex flex-col gap-4 pb-5 sm:gap-5 sm:pb-6">
           <div className="rounded-xl border border-border/60 bg-background/70 px-3 py-3 shadow-[0_0_25px_rgba(152,251,152,0.12)] sm:px-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-3 text-xs uppercase tracking-[0.35em] text-muted-foreground">
               <span>CLI-folio</span>
-              <span className="flex items-center gap-2 text-[11px] font-medium normal-case tracking-normal text-foreground/80">
+              <span className="flex items-center gap-2 text-xs font-medium normal-case tracking-normal text-foreground/80">
                 <span className={`h-2 w-2 rounded-full ${statusTone} animate-pulse`} />
                 {statusLabel}
               </span>
             </div>
-            <pre className="mt-3 whitespace-pre text-[10px] leading-tight text-primary/90 md:text-xs animate-flicker">
+            <pre className="mt-3 whitespace-pre text-xs leading-tight text-primary/90 animate-flicker">
               {ASCII_ART.join('\n')}
             </pre>
             <p className="mt-2 text-xs text-muted-foreground">
@@ -458,12 +458,12 @@ export function Terminal({ aiStatus }: TerminalProps) {
             <div className="mt-3 rounded-xl border border-accent/40 bg-[radial-gradient(circle_at_top,_rgba(173,216,230,0.18),_rgba(18,18,18,0.95)_65%)] px-3 py-3 text-xs shadow-[0_0_25px_rgba(173,216,230,0.15)] sm:mt-4 sm:px-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.4em] text-accent/80">Ask AI</p>
+                  <p className="text-xs uppercase tracking-[0.4em] text-accent/80">Ask AI</p>
                   <p className="mt-1 text-sm text-foreground/90">
                     Ask the portfolio AI about impact, projects, or systems. It answers using verified portfolio data.
                   </p>
                 </div>
-                <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-background/50 px-2.5 py-1 text-[11px] text-accent sm:px-3">
+                <span className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-background/50 px-2.5 py-1 text-xs text-accent sm:px-3">
                   <span className={`h-2 w-2 rounded-full ${aiBadgeTone} ${isAiConfigured ? 'animate-pulse' : ''}`} />
                   {aiBadgeLabel}
                 </span>
@@ -475,13 +475,13 @@ export function Terminal({ aiStatus }: TerminalProps) {
                     type="button"
                     onClick={() => handleQuickAction(prompt.command)}
                     disabled={isProcessing || booting || !isAiConfigured}
-                    className="rounded-full border border-accent/40 bg-secondary/60 px-2.5 py-1 text-[11px] text-foreground/80 transition hover:border-accent hover:bg-secondary hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 sm:px-3"
+                    className="rounded-full border border-accent/40 bg-secondary/60 px-2.5 py-1 text-xs text-foreground/80 transition hover:border-accent hover:bg-secondary hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50 sm:px-3"
                   >
                     {prompt.label}
                   </button>
                 ))}
               </div>
-              <p className="mt-2 text-[11px] text-muted-foreground">
+              <p className="mt-2 text-xs text-muted-foreground">
                 {isAiConfigured ? (
                   <>Try typing <span className="text-foreground">ask "&lt;question&gt;"</span> or tap a prompt.</>
                 ) : (
@@ -502,7 +502,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
                   {action}
                 </button>
               ))}
-              <span className="ml-auto text-[11px] text-muted-foreground">{statusHint}</span>
+              <span className="ml-auto text-xs text-muted-foreground">{statusHint}</span>
             </div>
           </div>
           <div className="flex flex-col gap-1 text-sm md:text-base text-foreground/90">
@@ -573,7 +573,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
                 type="button"
                 onClick={() => navigateHistory('up')}
                 disabled={historyIndex >= commandHistory.length - 1}
-                className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/60 px-3 py-1 text-[11px] text-foreground/80 transition hover:border-accent/70 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/60 px-3 py-1 text-xs text-foreground/80 transition hover:border-accent/70 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span className="text-accent/90">↑</span>
                 Previous command
@@ -582,7 +582,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
                 type="button"
                 onClick={() => navigateHistory('down')}
                 disabled={historyIndex < 0}
-                className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/60 px-3 py-1 text-[11px] text-foreground/80 transition hover:border-accent/70 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/60 px-3 py-1 text-xs text-foreground/80 transition hover:border-accent/70 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span className="text-accent/90">↓</span>
                 Newer command
@@ -599,7 +599,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
                     key={suggestion}
                     type="button"
                     onClick={() => handleQuickAction(suggestion)}
-                    className="rounded-full border border-border/50 bg-background/40 px-2 py-0.5 text-[11px] text-foreground/70 transition hover:border-accent/60 hover:text-foreground"
+                    className="rounded-full border border-border/50 bg-background/40 px-2 py-0.5 text-xs text-foreground/70 transition hover:border-accent/60 hover:text-foreground"
                   >
                     <span className="text-accent/80">{parts.leading}</span>
                     <span>{parts.trailing}</span>

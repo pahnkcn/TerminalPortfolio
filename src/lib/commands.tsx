@@ -311,11 +311,11 @@ const getHelp = () => (
 );
 
 const getAboutMe = () => (
-  <p className="whitespace-pre-wrap">{ABOUTME_TEXT}</p>
+  <p className="whitespace-pre-wrap text-sm">{ABOUTME_TEXT}</p>
 );
 
 const getSkills = () => (
-  <div className="space-y-4">
+  <div className="space-y-4 text-sm">
     <p>Use 'skill &lt;name&gt;' to view details.</p>
     {SKILLS.map(group => (
       <div key={group.category}>
@@ -372,13 +372,13 @@ const getSkillDetails = (name: string) => {
   }
 
   return (
-    <div>
-      <h3 className="text-lg font-bold text-accent">{skill.name}</h3>
+    <div className="text-sm">
+      <h3 className="font-bold text-accent">{skill.name}</h3>
       <p className="text-xs uppercase tracking-[0.2em] text-accent/80">
         {skill.level}{typeof skill.score === 'number' ? ` · ${formatSkillScore(skill.score)}` : ''}
       </p>
       {typeof skill.score === 'number' && (
-        <pre className="mt-2 font-mono text-[11px] text-foreground/80">
+        <pre className="mt-2 font-mono text-sm text-foreground/80">
           [{buildAsciiBar(skill.score)}]
         </pre>
       )}
@@ -404,7 +404,7 @@ const groupProjectsByCategory = (projects: ProjectItem[]) =>
 const getProjects = () => {
   const groupedProjects = groupProjectsByCategory(PROJECTS);
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 text-sm">
       <p>Here are my projects. Use 'project &lt;name&gt;' to see details.</p>
       {groupedProjects.map(group => (
         <div key={group.category}>
@@ -430,10 +430,10 @@ const getProjectDetails = (name: string) => {
   }
 
   return (
-      <div>
-          <h3 className="text-lg font-bold text-accent">{project.title}</h3>
+      <div className="text-sm">
+          <h3 className="font-bold text-accent">{project.title}</h3>
           <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{project.category}</p>
-          <p className="font-mono text-sm text-muted-foreground">{project.technologies}</p>
+          <p className="font-mono text-muted-foreground">{project.technologies}</p>
           <p className="mt-2 whitespace-pre-wrap">{project.description}</p>
           {project.link && <a href={project.link} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline mt-2 inline-block">View on GitHub</a>}
       </div>
@@ -442,11 +442,11 @@ const getProjectDetails = (name: string) => {
 
 
 const getExperience = () => (
-    <div className="space-y-4">
+    <div className="space-y-4 text-sm">
       {EXPERIENCE.map((exp, index) => (
         <div key={index}>
           <h3 className="font-bold text-accent">{exp.role} @ {exp.company}</h3>
-          <p className="text-sm text-muted-foreground">{exp.period}</p>
+          <p className="text-muted-foreground">{exp.period}</p>
           <p className="mt-1">{exp.description}</p>
         </div>
       ))}
@@ -454,11 +454,11 @@ const getExperience = () => (
 );
 
 const getEducation = () => (
-  <div className="space-y-4">
+  <div className="space-y-4 text-sm">
     {EDUCATION.map((edu, index) => (
       <div key={`${edu.school}-${index}`}>
         <h3 className="font-bold text-accent">{edu.program}</h3>
-        <p className="text-sm text-muted-foreground">{edu.school} · {edu.period}</p>
+        <p className="text-muted-foreground">{edu.school} · {edu.period}</p>
         <ul className="mt-2 list-disc list-inside space-y-1">
           {edu.highlights.map((highlight, highlightIndex) => (
             <li key={`${edu.school}-${highlightIndex}`}>{highlight}</li>
@@ -470,9 +470,9 @@ const getEducation = () => (
 );
 
 const getResume = () => (
-  <div className="space-y-4">
+  <div className="space-y-4 text-sm">
     <div>
-      <h3 className="text-lg font-bold text-accent">{RESUME.headline}</h3>
+      <h3 className="font-bold text-accent">{RESUME.headline}</h3>
       <p className="text-xs uppercase tracking-[0.2em] text-accent/80">
         Updated {RESUME.lastUpdated}
       </p>
@@ -499,7 +499,7 @@ const getResume = () => (
 );
 
 const getContact = () => (
-  <div className="space-y-2">
+  <div className="space-y-2 text-sm">
     {CONTACT_INFO.map(item => (
       <div key={item.name} className="flex items-center gap-4">
         <span className="w-16">{item.name}:</span>
@@ -535,7 +535,7 @@ const getAskResponse = async (question: string) => {
       question: unquoted,
       portfolio: getPortfolioSnapshot(),
     });
-    return <TypingResponse text={answer} />;
+    return <TypingResponse text={answer} className="text-sm" />;
   } catch (error) {
     console.error(error);
     return renderAiError(error);
