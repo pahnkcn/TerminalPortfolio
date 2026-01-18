@@ -127,6 +127,19 @@ const TypingResponse = ({ text, className }: TypingResponseProps) => {
   );
 };
 
+const SKILL_SCORE_MAX = 100;
+const SKILL_BAR_SEGMENTS = 22;
+
+const clampScore = (score: number) => Math.min(SKILL_SCORE_MAX, Math.max(0, score));
+
+const buildAsciiBar = (score: number) => {
+  const normalized = clampScore(score);
+  const filled = Math.round((normalized / SKILL_SCORE_MAX) * SKILL_BAR_SEGMENTS);
+  return `${'#'.repeat(filled)}${'-'.repeat(SKILL_BAR_SEGMENTS - filled)}`;
+};
+
+const formatSkillScore = (score: number) => `${Math.round(score)}%`;
+
 const getEditDistance = (source: string, target: string) => {
   const sourceLength = source.length;
   const targetLength = target.length;
@@ -217,7 +230,14 @@ const getSkillDetails = (name: string) => {
   return (
     <div>
       <h3 className="text-lg font-bold text-accent">{skill.name}</h3>
-      <p className="text-xs uppercase tracking-[0.2em] text-accent/80">{skill.level}</p>
+      <p className="text-xs uppercase tracking-[0.2em] text-accent/80">
+        {skill.level}{typeof skill.score === 'number' ? ` · ${formatSkillScore(skill.score)}` : ''}
+      </p>
+      {typeof skill.score === 'number' && (
+        <pre className="mt-2 font-mono text-[11px] text-foreground/80">
+          [{buildAsciiBar(skill.score)}]
+        </pre>
+      )}
       <p className="mt-2 whitespace-pre-wrap">{skill.summary}</p>
     </div>
   );
