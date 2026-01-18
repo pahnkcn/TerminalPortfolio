@@ -537,7 +537,7 @@ const getAskResponse = async (question: string) => {
       question: unquoted,
       portfolio: getPortfolioSnapshot(),
     });
-    return <TypingResponse text={answer} className="text-sm" />;
+    return <TypingResponse text={answer} className="text-sm mt-2" />;
   } catch (error) {
     console.error(error);
     return renderAiError(error);
@@ -548,12 +548,12 @@ const getFortuneResponse = async () => {
   const dayKey = getLocalDayKey();
   const cached = readDailyFortune(dayKey);
   if (cached) {
-    return <TypingResponse text={cached} className="text-accent" />;
+    return <TypingResponse text={cached} className="text-accent text-sm mt-2" />;
   }
   try {
     const { fortune } = await generateFortuneResponse();
     writeDailyFortune(dayKey, fortune);
-    return <TypingResponse text={fortune} className="text-accent" />;
+    return <TypingResponse text={fortune} className="text-accent text-sm mt-2" />;
   } catch (error) {
     console.error(error);
     return renderAiError(error);

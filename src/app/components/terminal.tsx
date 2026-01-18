@@ -307,7 +307,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
     const newHistoryItem: HistoryItem = {
       command: commandStr,
       output: (
-        <span className={`animate-pulse ${isAskCommand ? 'text-accent' : ''}`}>
+        <span className={`animate-pulse mt-2 ${isAskCommand ? 'text-accent' : ''}`}>
           {processingLabel}
         </span>
       ),
