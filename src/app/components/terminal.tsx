@@ -145,6 +145,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
     : '';
   const showSuggestion = isCursorAtEnd && suggestionSuffix;
   const primarySuggestion = suggestions[0] ?? '';
+  const showMobileAutocomplete = showSuggestion && Boolean(activeSuggestion);
   const getSuggestionParts = (suggestion: string) => {
     if (!normalizedInput) {
       return { leading: '', trailing: suggestion };
@@ -523,6 +524,16 @@ export function Terminal({ aiStatus }: TerminalProps) {
                 )}
               </div>
             </div>
+          )}
+          {!isProcessing && !booting && showMobileAutocomplete && (
+            <button
+              type="button"
+              onClick={() => applySuggestion()}
+              className="ml-0 inline-flex w-fit items-center gap-2 rounded-full border border-accent/50 bg-secondary/60 px-3 py-1 text-[11px] text-foreground/80 transition hover:border-accent hover:bg-secondary/80 hover:text-foreground sm:hidden"
+            >
+              <span className="text-accent/90">Tap to autocomplete</span>
+              <span className="truncate">{activeSuggestion}</span>
+            </button>
           )}
           {!isProcessing && !booting && suggestions.length > 1 && (
             <div className="ml-0 flex flex-wrap gap-x-4 gap-y-1 rounded-lg border border-border/40 bg-secondary/40 px-3 py-2 text-xs text-muted-foreground sm:ml-6">
