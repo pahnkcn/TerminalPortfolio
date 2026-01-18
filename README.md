@@ -1,141 +1,120 @@
 # CLI-folio
 
-A modern developer portfolio built with Next.js 15, featuring an interactive terminal/CLI experience theme. This project showcases web development skills through a unique command-line interface that visitors can interact with.
+CLI-folio is a terminal-style developer portfolio built with Next.js App Router. It simulates a boot sequence, accepts CLI commands, and surfaces your profile data from a single config file. Optional AI commands answer questions about your experience using server-side provider routing.
 
-## 🚀 Features
+## Features
 
-- **Terminal Interface**: Interactive CLI-style portfolio navigation
-- **Modern Tech Stack**: Built with Next.js 15, React 19, and TypeScript
-- **AI Integration**: Multi-provider AI (Gemini, OpenAI, DeepSeek, Grok) with server-only keys and cooldown protection
-- **Responsive Design**: Mobile-friendly with Tailwind CSS
-- **Dark Theme**: Eye-friendly dark mode with terminal aesthetics
-- **Component Library**: Built with Radix UI and shadcn/ui components
+- Boot sequence animation with ASCII banner, scanline glow, and blinking cursor.
+- Command history (arrow keys), tab autocomplete, and quick-action buttons.
+- Data-driven sections for about, skills, projects, experience, education, resume, and contact.
+- AI-powered `ask` command with prompt suggestions and cooldown protection.
+- Daily `fortune` command with local caching to reduce repeat requests.
+- Source Code Pro typography and configurable terminal theme.
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-### Frontend
-- **Framework**: Next.js 15.5.9
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI + shadcn/ui
-- **Icons**: Lucide React
-- **Forms**: React Hook Form + Zod validation
+**Frontend**
+- Next.js 15 (App Router), React 19, TypeScript
+- Tailwind CSS + shadcn/ui (Radix UI primitives)
+- Lucide icons
 
-### Backend & AI
-- **AI Layer**: Server-side provider router (Gemini / OpenAI / DeepSeek / xAI Grok)
+**AI and Server**
+- Server Actions with a fetch-based provider router (Gemini, OpenAI, DeepSeek, xAI Grok)
+- Zod validation for AI outputs
 
-### Development Tools
-- **Package Manager**: npm
-- **Code Quality**: ESLint, TypeScript
-- **Build Tool**: Next.js with Turbopack
+**Tooling**
+- npm scripts with Turbopack dev server
+- ESLint and TypeScript
 
-## 📦 Installation
+## Getting Started
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/TerminalPortfolio.git
-   cd TerminalPortfolio
-   ```
-
-2. **Install dependencies**
+1. Install dependencies
    ```bash
    npm install
    ```
-
-3. **Set up environment variables**
-   Create a `.env.local` file in the root directory:
-   ```env
-   # Choose the provider to use for AI commands.
-   # Options: gemini | openai | deepseek | grok
-   AI_PROVIDER=gemini
-
-   # Provider API keys (keep these server-side only).
-   GEMINI_API_KEY=your_gemini_api_key
-   OPENAI_API_KEY=your_openai_api_key
-   DEEPSEEK_API_KEY=your_deepseek_api_key
-   XAI_API_KEY=your_xai_api_key
-
-   # Optional model overrides
-   GEMINI_MODEL=gemini-2.5-flash
-   OPENAI_MODEL=gpt-4o-mini
-   DEEPSEEK_MODEL=deepseek-chat
-   XAI_MODEL=grok-4
-
-   # Cooldown for AI commands (ms). Default is 120000 (2 minutes).
-   AI_COOLDOWN_MS=120000
-
+2. Configure environment
+   ```bash
+   copy .env.example .env.local
    ```
-
-4. **Run the development server**
+   Then add your API keys.
+3. Run the dev server
    ```bash
    npm run dev
    ```
+   Open http://localhost:9002.
 
-   Open [http://localhost:9002](http://localhost:9002) in your browser.
+## Environment Variables
 
-## 🎯 Available Commands
+```
+AI_PROVIDER=gemini            # gemini | openai | deepseek | grok
+GEMINI_API_KEY=your_key
+OPENAI_API_KEY=your_key
+DEEPSEEK_API_KEY=your_key
+XAI_API_KEY=your_key
+GEMINI_MODEL=gemini-2.5-flash
+OPENAI_MODEL=gpt-4o-mini
+DEEPSEEK_MODEL=deepseek-chat
+XAI_MODEL=grok-4
+AI_COOLDOWN_MS=15000
+```
 
-The terminal interface supports various commands that visitors can use to explore your portfolio:
+AI keys stay server-side only. If no key is configured, AI commands remain offline.
 
-- `help` - Display available commands
-- `ask "<question>"` - Ask the AI about projects, impact, and systems
-- `aboutme` - Learn about the developer
-- `projects` - View project portfolio
-- `project <name>` - View a specific project
-- `skills` - Show technical skills
-- `skill <name>` - View a specific skill
-- `contact` - Get contact information
-- `experience` - View work experience
-- `education` - Academic background
-- `resume` - Summary plus resume download link
-- `clear` - Clear the terminal
+## Commands
 
-### Build for Production
+Core commands:
+- `help`
+- `aboutme`
+- `skills`
+- `skill <name>`
+- `projects`
+- `project <name>`
+- `experience`
+- `education`
+- `resume`
+- `contact`
+- `clear`
+
+AI and extra commands:
+- `ask "<question>"` (AI)
+- `fortune` (AI daily fortune)
+- `cat` / `coffee` (ASCII art)
+
+## Project Structure
+
+```
+src/
+  app/
+    components/terminal.tsx
+    layout.tsx
+    page.tsx
+  ai/
+    client.ts
+    flows/
+  lib/
+    data.ts
+    commands.tsx
+  components/ui/
+  hooks/
+docs/
+```
+
+## Customize
+
+- Update portfolio content in `src/lib/data.ts`.
+- Add or modify commands in `src/lib/commands.tsx`.
+- Adjust UI/behavior in `src/app/components/terminal.tsx`.
+- Edit theme tokens in `src/app/globals.css` and `tailwind.config.ts`.
+- Update metadata and fonts in `src/app/layout.tsx`.
+
+## Build and Run
 
 ```bash
 npm run build
-npm start
+npm run start
 ```
 
-## 📁 Project Structure
-
-```
-TerminalPortfolio/
-├── src/
-│   ├── app/                 # Next.js app router
-│   │   ├── components/      # Page-specific components
-│   │   ├── layout.tsx       # Root layout
-│   │   └── page.tsx         # Home page
-│   ├── components/          # Reusable UI components
-│   │   ├── ui/             # shadcn/ui components
-│   │   └── terminal/       # Terminal-specific components
-│   ├── hooks/              # Custom React hooks
-│   ├── lib/                # Utility functions
-│   └── ai/                 # AI integration logic
-├── public/                 # Static assets
-├── docs/                   # Documentation
-├── package.json           # Dependencies and scripts
-├── tailwind.config.ts     # Tailwind configuration
-└── tsconfig.json          # TypeScript configuration
-```
-
-## 🎨 Customization
-
-### Adding New Commands
-
-1. Create a new command handler in `src/components/terminal/commands/`
-2. Register the command in the terminal component
-3. Update the help command to include your new command
-
-### Styling
-
-The project uses Tailwind CSS with a dark theme. Modify `tailwind.config.ts` to customize colors and styling.
-
-### AI Responses
-
-Customize AI responses by modifying the prompts and handlers in `src/ai/` directory. Provider selection is controlled by `AI_PROVIDER` and server-only API keys, so secrets never reach the browser.
-
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -143,18 +122,18 @@ Customize AI responses by modifying the prompts and handlers in `src/ai/` direct
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Next.js](https://nextjs.org/) - The React framework
 - [Radix UI](https://www.radix-ui.com/) - Unstyled, accessible components
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 - [Lucide](https://lucide.dev/) - Beautiful icons
 
-## 📞 Contact
+## Contact
 
 - Portfolio: [your-portfolio-url.com](https://your-portfolio-url.com)
 - GitHub: [@yourusername](https://github.com/yourusername)

@@ -515,16 +515,22 @@ export function Terminal({ aiStatus }: TerminalProps) {
           {history.map((item, index) => (
             <div key={index} className="space-y-1 animate-rise">
               <div className="grid grid-cols-[auto,1fr] items-start gap-x-2">
-                <span className="text-accent drop-shadow">user@portfolio:~$</span>
-                <span className="min-w-0 whitespace-pre-wrap break-words">{item.command}</span>
+                <span className="text-accent drop-shadow font-semibold text-sm sm:text-base">
+                  user@portfolio:~$
+                </span>
+                <span className="min-w-0 whitespace-pre-wrap break-words font-medium text-foreground">
+                  {item.command}
+                </span>
               </div>
               <div className="text-foreground/90">{item.output}</div>
             </div>
           ))}
           {!isProcessing && !booting && (
             <div className="grid grid-cols-[auto,1fr] items-start gap-x-2 animate-rise">
-              <span className="text-accent drop-shadow">user@portfolio:~$</span>
-              <div className="relative min-w-0 whitespace-pre-wrap break-words text-foreground/90">
+              <span className="text-accent drop-shadow font-semibold text-sm sm:text-base">
+                user@portfolio:~$
+              </span>
+              <div className="relative min-w-0 whitespace-pre-wrap break-words text-foreground">
                 <input
                   ref={inputRef}
                   type="text"
@@ -546,7 +552,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
                   autoCorrect="off"
                   aria-label="Terminal input"
                 />
-                <span className="relative z-10 pointer-events-none">
+                <span className="relative z-10 pointer-events-none font-medium">
                   {inputBeforeCursor}
                   <span className="inline-block h-[1em] w-2 align-text-bottom rounded-sm bg-primary shadow-[0_0_12px_rgba(152,251,152,0.7)] animate-blink"></span>
                   {inputAfterCursor}
