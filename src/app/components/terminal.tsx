@@ -145,7 +145,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
     : '';
   const showSuggestion = isCursorAtEnd && suggestionSuffix;
   const primarySuggestion = suggestions[0] ?? '';
-  const getSuggestionParts = (suggestion: string) => {
+  const getSuggestionParts = useCallback((suggestion: string) => {
     if (!normalizedInput) {
       return { leading: '', trailing: suggestion };
     }
@@ -157,7 +157,7 @@ export function Terminal({ aiStatus }: TerminalProps) {
       leading: suggestion.slice(0, typedInput.length),
       trailing: suggestion.slice(typedInput.length),
     };
-  };
+  }, [normalizedInput, typedInput]);
   const statusTone = booting ? 'bg-yellow-400' : isProcessing ? 'bg-sky-400' : 'bg-emerald-400';
   const statusLabel = booting ? 'Booting systems' : isProcessing ? 'Processing' : 'System online';
   const statusHint = booting
