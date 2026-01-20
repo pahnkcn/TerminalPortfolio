@@ -305,7 +305,7 @@ const getHelp = () => (
 
     <div className="text-xs text-muted-foreground border-t border-accent/20 pt-3">
       <p>💡 <strong>Tip:</strong> Use arrow keys to navigate through command history!</p>
-      <p>🤖 <strong>AI Commands:</strong> 'ask' and 'fortine' use AI with a 15-second delay between requests</p>
+      <p>🤖 <strong>AI Commands:</strong> 'ask' and 'fortune' use AI with a 15-second delay between requests</p>
     </div>
   </div>
 );
