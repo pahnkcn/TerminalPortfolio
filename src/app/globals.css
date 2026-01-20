@@ -71,12 +71,4 @@
   .terminal-scroll-area [data-radix-scroll-area-corner] {
     display: none;
   }
-
-  .terminal-output {
-    text-align: justify;
-    text-justify: inter-word;
-    text-align-last: left;
-    text-align-last: start;
-    hyphens: auto;
-  }
 }
